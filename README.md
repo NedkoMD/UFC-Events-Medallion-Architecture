@@ -79,13 +79,23 @@ Star schema for analytics:
 * Python 3 with `kagglehub` installed
 * Spark compute (Serverless or interactive cluster)
 
-### Running the Notebook
+## Repository Structure
 
-1. Open `ufc_events.ipynb` in your Databricks workspace
-2. Run cells top-to-bottom (or Run All)
+The pipeline is split into one notebook per medallion layer:
+
+```
+01_bronze_ingestion.ipynb   # Kaggle download -> raw Delta tables (workspace.ufc_bronze)
+02_silver_layer.ipynb      # Bronze -> cleaned & standardized tables (ufc_silver)
+03_gold_layer.ipynb        # Silver -> star schema (ufc_gold) + validation summary
+```
+
+### Running the Pipeline
+
+1. Clone this repo into a Databricks Git folder (or import the three notebooks into your workspace)
+2. Run them in order: **01_bronze_ingestion** → **02_silver_layer** → **03_gold_layer** — each layer depends on the previous layer's tables
 3. The pipeline creates three schemas: `workspace.ufc_bronze`, `ufc_silver`, `ufc_gold`
 
-> **Note:** Cell 2 (`pip install kagglehub`) and Cell 3 (`kagglehub.dataset_download`) require internet access on the driver node.
+> **Note:** The bronze notebook's `pip install kagglehub` and `kagglehub.dataset_download` cells require internet access on the driver node.
 
 ## Key Transformations
 
